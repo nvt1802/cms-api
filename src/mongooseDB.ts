@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { ITask } from "./type";
 
-const uri = "mongodb+srv://admin:admin@cluster0.x32uf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://tainguyen:Vantai6600@cluster0.eim6r.mongodb.net/";
 mongoose
   .connect(uri)
   .then(() => console.log("Connected to MongoDB"))
