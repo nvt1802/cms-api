@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
-import accountRoutes from "@api/account";
-import postsRoutes from "@api/posts";
+import accountRoutes from "./api/account";
+import postsRoutes from "./api/posts";
 
 dotenv.config();
 const app: Express = express();
