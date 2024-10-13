@@ -5,6 +5,8 @@ import cors from "cors";
 import authRoutes from "./api/auth";
 import postsRoutes from "./api/posts";
 import accountRoutes from "./api/account";
+import categoriesRoutes from "./api/categories";
+import tagsRoutes from "./api/tags";
 
 
 dotenv.config();
@@ -21,6 +23,8 @@ app.get("/", async (req: Request, res: Response) => {
 app.use("/api/", authRoutes);
 app.use("/api/", postsRoutes);
 app.use("/api/", accountRoutes);
+app.use("/api/", categoriesRoutes);
+app.use("/api/", tagsRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at port: ${port}`);

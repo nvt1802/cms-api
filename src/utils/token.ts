@@ -7,7 +7,7 @@ const jwtSecret = process.env.JWT_SECRET || "";
 
 const generateToken = (user: IUserAuth) => {
   return jwt.sign({ username: user.username, email: user.email }, jwtSecret, {
-    expiresIn: "1h",
+    expiresIn: "1d",
   });
 };
 
