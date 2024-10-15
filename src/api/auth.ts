@@ -45,7 +45,7 @@ router.post("/login", async (req: Request, res: Response) => {
       );
       if (passwordIsCorrect) {
         const token = generateToken(userExists);
-        res.json(
+        res.status(HTTPStatusCode.OK).json(
           responseAPI({ token, userId: userExists?.id }, HTTPStatusCode.OK)
         );
       }
@@ -72,12 +72,14 @@ router.post("/signup", async (req: Request, res: Response) => {
       const hashedPassword = await hashPassword(password);
       const newUser = { username, password: hashedPassword, email, role };
       const { data: _ } = await supabase.from("users").insert([newUser]);
-      res.json(
-        responseAPI(
-          { message: "User registered successfully!" },
-          HTTPStatusCode.CREATED
-        )
-      );
+      res
+        .status(HTTPStatusCode.CREATED)
+        .json(
+          responseAPI(
+            { message: "User registered successfully!" },
+            HTTPStatusCode.CREATED
+          )
+        );
     } else {
       res
         .status(HTTPStatusCode.CONFLICT)

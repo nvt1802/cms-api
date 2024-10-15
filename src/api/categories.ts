@@ -21,7 +21,7 @@ router.get(
 
       if (data && !!data?.length) {
         const totalPages = Math.ceil((count || 0) / limit);
-        res.json(
+        res.status(HTTPStatusCode.OK).json(
           responseAPI(
             {
               page,

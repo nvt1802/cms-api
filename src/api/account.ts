@@ -20,6 +20,7 @@ router.get(
         res.json(responseAPI(data[0], HTTPStatusCode.OK));
       } else {
         res
+          .status(HTTPStatusCode.CREATED)
           .status(HTTPStatusCode.UNAUTHORIZED)
           .json({ message: "Invalid credentials" });
       }
@@ -43,7 +44,7 @@ router.get("/users", authenticateToken, async (req: Request, res: Response) => {
 
     if (data && !!data?.length) {
       const totalPages = Math.ceil((count || 0) / limit);
-      res.json(
+      res.status(HTTPStatusCode.OK).json(
         responseAPI(
           {
             page,

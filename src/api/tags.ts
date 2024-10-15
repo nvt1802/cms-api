@@ -18,7 +18,7 @@ router.get("/tags", authenticateToken, async (req: Request, res: Response) => {
 
     if (data && !!data?.length) {
       const totalPages = Math.ceil((count || 0) / limit);
-      res.json(
+      res.status(HTTPStatusCode.OK).json(
         responseAPI(
           {
             page,
