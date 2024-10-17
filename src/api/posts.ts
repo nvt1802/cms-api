@@ -100,4 +100,22 @@ router.post(
   }
 );
 
+router.put(
+  "/posts/:slug",
+  authenticateToken,
+  async (req: Request, res: Response) => {   
+    try {
+      const { data, error } = await supabase
+        .from("posts")
+        .update(req.body)
+        .eq("slug", req.params?.slug);
+      res.status(HTTPStatusCode.OK).json(responseAPI(data, HTTPStatusCode.OK));
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
 export default router;
