@@ -103,13 +103,109 @@ router.post(
 router.put(
   "/posts/:slug",
   authenticateToken,
-  async (req: Request, res: Response) => {   
+  async (req: Request, res: Response) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("posts")
         .update(req.body)
         .eq("slug", req.params?.slug);
-      res.status(HTTPStatusCode.OK).json(responseAPI(data, HTTPStatusCode.OK));
+      if (error) {
+        res
+          .status(HTTPStatusCode.CONFLICT)
+          .json(
+            responseAPI({ message: error.message }, HTTPStatusCode.CONFLICT)
+          );
+      } else {
+        const { data } = await supabase
+          .from("posts")
+          .select(
+            "*, categories(id, name,slug), users(id, username, profile_picture), tags(id, name,slug)"
+          )
+          .eq("slug", req.body?.slug)
+          .single();
+        res
+          .status(HTTPStatusCode.OK)
+          .json(responseAPI(data, HTTPStatusCode.OK));
+      }
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
+router.put(
+  "/posts/tags/:slug",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data: post } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("slug", req.params?.slug)
+        .single();
+
+      const {} = await supabase
+        .from("post_tags")
+        .delete()
+        .eq("post_id", post?.id);
+
+      const tagIds: string[] = req.body?.tags_id ?? [];
+
+      const postTags = tagIds.map((tagId) => ({
+        post_id: post?.id,
+        tag_id: tagId,
+      }));
+
+      const { error: postTagError } = await supabase
+        .from("post_tags")
+        .insert(postTags);
+
+      res.status(HTTPStatusCode.OK).json(responseAPI(post, HTTPStatusCode.OK));
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
+router.post(
+  "/posts/publish",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data: post } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("id", req.body?.id)
+        .single();
+      const { error } = await supabase
+        .from("posts")
+        .update({
+          ...post,
+          status: req.body?.status,
+        })
+        .eq("id", req.body?.id);
+      if (error) {
+        res
+          .status(HTTPStatusCode.CONFLICT)
+          .json(
+            responseAPI({ message: error.message }, HTTPStatusCode.CONFLICT)
+          );
+      } else {
+        const { data } = await supabase
+          .from("posts")
+          .select(
+            "*, categories(id, name,slug), users(id, username, profile_picture), tags(id, name,slug)"
+          )
+          .eq("id", req.body?.id)
+          .single();
+        res
+          .status(HTTPStatusCode.OK)
+          .json(responseAPI(data, HTTPStatusCode.OK));
+      }
     } catch (error) {
       res
         .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)

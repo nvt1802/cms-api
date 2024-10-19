@@ -14,7 +14,7 @@ router.get(
     try {
       const { data, error } = await supabase
         .from("users")
-        .select("username,email,profile_picture,role")
+        .select("username,email,profile_picture,role,first_name,last_name")
         .eq("id", userId);
       if (data && !!data?.length) {
         res.json(responseAPI(data[0], HTTPStatusCode.OK));

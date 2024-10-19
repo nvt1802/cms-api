@@ -36,15 +36,20 @@ const upload = multer({ storage });
 router.post(
   "/upload",
   authenticateToken,
-  upload.array("file"),
+  upload.single("file"),
   (req: Request, res: Response) => {
     try {
       if (req.file) {
-        res.status(HTTPStatusCode.OK).json({
-          message: "File uploaded successfully",
-          url: (req.file as Express.Multer.File).path,
-          public_id: (req.file as Express.Multer.File).filename,
-        });
+        res.status(HTTPStatusCode.OK).json(
+          responseAPI(
+            {
+              message: "File uploaded successfully",
+              url: (req.file as Express.Multer.File).path,
+              public_id: (req.file as Express.Multer.File).filename,
+            },
+            HTTPStatusCode.OK
+          )
+        );
       } else {
         res
           .status(HTTPStatusCode.NOT_FOUND)
@@ -76,7 +81,7 @@ router.post(
         }));
         res
           .status(HTTPStatusCode.OK)
-          .json(responseAPI(uploadedFiles, HTTPStatusCode.NOT_FOUND));
+          .json(responseAPI(uploadedFiles, HTTPStatusCode.OK));
       } else {
         res
           .status(HTTPStatusCode.NOT_FOUND)
