@@ -76,7 +76,7 @@ router.post(
   authenticateToken,
   async (req: Request, res: Response) => {
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("posts")
         .select("slug")
         .like("slug", req.body?.slug);
@@ -87,10 +87,14 @@ router.post(
             responseAPI({ message: "slug is used" }, HTTPStatusCode.CONFLICT)
           );
       } else {
-        const { data: _ } = await supabase.from("posts").insert([req.body]);
+        const { data: post } = await supabase
+          .from("posts")
+          .insert([req.body])
+          .select("*")
+          .single();
         res
           .status(HTTPStatusCode.CREATED)
-          .json(responseAPI(data, HTTPStatusCode.CREATED));
+          .json(responseAPI(post, HTTPStatusCode.CREATED));
       }
     } catch (error) {
       res
@@ -206,6 +210,59 @@ router.post(
           .status(HTTPStatusCode.OK)
           .json(responseAPI(data, HTTPStatusCode.OK));
       }
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
+router.get(
+  "/posts/check-slug/:slug",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data } = await supabase
+        .from("posts")
+        .select("slug")
+        .eq("slug", req.params?.slug)
+        .single();
+
+      res
+        .status(HTTPStatusCode.OK)
+        .json(responseAPI({ isUsed: data ? true : false }, HTTPStatusCode.OK));
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
+router.post(
+  "/posts/tags",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data: post } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("slug", req.body?.slug)
+        .single();
+      console.log(post);
+
+      const tagIds: string[] = req.body?.tags_id ?? [];
+      const postTags = tagIds.map((tagId) => ({
+        post_id: post?.id,
+        tag_id: tagId,
+      }));
+      const { error: _postTagError } = await supabase
+        .from("post_tags")
+        .insert(postTags);
+      res
+        .status(HTTPStatusCode.OK)
+        .json(responseAPI({ message: "Add tags success" }, HTTPStatusCode.OK));
     } catch (error) {
       res
         .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
