@@ -250,7 +250,6 @@ router.post(
         .select("*")
         .eq("slug", req.body?.slug)
         .single();
-      console.log(post);
 
       const tagIds: string[] = req.body?.tags_id ?? [];
       const postTags = tagIds.map((tagId) => ({
