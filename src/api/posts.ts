@@ -111,13 +111,16 @@ router.put(
     try {
       const { error } = await supabase
         .from("posts")
-        .update(req.body)
+        .update({
+          ...req.body,
+          updated_at: new Date().toISOString(),
+        })
         .eq("slug", req.params?.slug);
       if (error) {
         res
-          .status(HTTPStatusCode.CONFLICT)
+          .status(HTTPStatusCode.NOT_FOUND)
           .json(
-            responseAPI({ message: error.message }, HTTPStatusCode.CONFLICT)
+            responseAPI({ message: error.message }, HTTPStatusCode.NOT_FOUND)
           );
       } else {
         const { data } = await supabase
@@ -189,6 +192,7 @@ router.post(
         .from("posts")
         .update({
           ...post,
+          published_at: new Date().toISOString(),
           status: req.body?.status,
         })
         .eq("id", req.body?.id);
