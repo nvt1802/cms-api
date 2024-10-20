@@ -40,6 +40,33 @@ router.get("/tags", authenticateToken, async (req: Request, res: Response) => {
   }
 });
 
+router.post("/tags", authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const { data } = await supabase
+      .from("tags")
+      .select("slug")
+      .like("slug", req.body?.slug);
+    if (!!data?.length) {
+      res
+        .status(HTTPStatusCode.CONFLICT)
+        .json(
+          responseAPI({ message: "slug is used" }, HTTPStatusCode.CONFLICT)
+        );
+    } else {
+      const { data: post } = await supabase
+        .from("tags")
+        .insert([req.body])
+        .select("*")
+        .single();
+      res
+        .status(HTTPStatusCode.CREATED)
+        .json(responseAPI(post, HTTPStatusCode.CREATED));
+    }
+  } catch (error) {
+    res.status(HTTPStatusCode.INTERNAL_SERVER_ERROR).json({ message: "Error" });
+  }
+});
+
 router.put(
   "/tags/:tagId",
   authenticateToken,
@@ -75,33 +102,6 @@ router.put(
     }
   }
 );
-
-router.post("/tags", authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { data } = await supabase
-      .from("tags")
-      .select("slug")
-      .like("slug", req.body?.slug);
-    if (!!data?.length) {
-      res
-        .status(HTTPStatusCode.CONFLICT)
-        .json(
-          responseAPI({ message: "slug is used" }, HTTPStatusCode.CONFLICT)
-        );
-    } else {
-      const { data: post } = await supabase
-        .from("tags")
-        .insert([req.body])
-        .select("*")
-        .single();
-      res
-        .status(HTTPStatusCode.CREATED)
-        .json(responseAPI(post, HTTPStatusCode.CREATED));
-    }
-  } catch (error) {
-    res.status(HTTPStatusCode.INTERNAL_SERVER_ERROR).json({ message: "Error" });
-  }
-});
 
 router.delete(
   "/tags/:tagId",

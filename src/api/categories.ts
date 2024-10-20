@@ -46,4 +46,126 @@ router.get(
   }
 );
 
+router.post(
+  "/categories",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data } = await supabase
+        .from("categories")
+        .select("slug")
+        .like("slug", req.body?.slug);
+      if (!!data?.length) {
+        res
+          .status(HTTPStatusCode.CONFLICT)
+          .json(
+            responseAPI({ message: "slug is used" }, HTTPStatusCode.CONFLICT)
+          );
+      } else {
+        const { data: post } = await supabase
+          .from("categories")
+          .insert([req.body])
+          .select("*")
+          .single();
+        res
+          .status(HTTPStatusCode.CREATED)
+          .json(responseAPI(post, HTTPStatusCode.CREATED));
+      }
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
+router.put(
+  "/categories/:categoryId",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { error } = await supabase
+        .from("categories")
+        .update({
+          ...req.body,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", req.params?.categoryId);
+      if (error) {
+        res
+          .status(HTTPStatusCode.NOT_FOUND)
+          .json(
+            responseAPI({ message: error.message }, HTTPStatusCode.NOT_FOUND)
+          );
+      } else {
+        const { data } = await supabase
+          .from("categories")
+          .select("*")
+          .eq("id", req.params?.categoryId)
+          .single();
+        res
+          .status(HTTPStatusCode.OK)
+          .json(responseAPI(data, HTTPStatusCode.OK));
+      }
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
+router.delete(
+  "/categories/:categoryId",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data } = await supabase
+        .from("posts")
+        .select("category_id")
+        .eq("category_id", req.params?.categoryId)
+        .single();
+
+      if (data) {
+        res
+          .status(HTTPStatusCode.OK)
+          .json(
+            responseAPI(
+              { message: "Cannot delete category currently in use" },
+              HTTPStatusCode.OK
+            )
+          );
+      } else {
+        const { data, error } = await supabase
+          .from("categories")
+          .delete()
+          .eq("id", req.params?.categoryId);
+        if (error) {
+          res
+            .status(HTTPStatusCode.CREATED)
+            .json(
+              responseAPI(
+                { message: "Cannot delete category" },
+                HTTPStatusCode.CREATED
+              )
+            );
+        } else {
+          res
+            .status(HTTPStatusCode.CREATED)
+            .json(
+              responseAPI(
+                { message: "Delete category success" },
+                HTTPStatusCode.CREATED
+              )
+            );
+        }
+      }
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
 export default router;

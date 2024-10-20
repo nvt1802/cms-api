@@ -274,4 +274,40 @@ router.post(
   }
 );
 
+router.delete(
+  "/posts/:postId",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data, error } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", req.params?.postId);
+      if (error) {
+        res
+          .status(HTTPStatusCode.CREATED)
+          .json(
+            responseAPI(
+              { message: "Cannot delete post" },
+              HTTPStatusCode.CREATED
+            )
+          );
+      } else {
+        res
+          .status(HTTPStatusCode.CREATED)
+          .json(
+            responseAPI(
+              { message: "Delete post success" },
+              HTTPStatusCode.CREATED
+            )
+          );
+      }
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
 export default router;

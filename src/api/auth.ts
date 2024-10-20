@@ -45,9 +45,15 @@ router.post("/login", async (req: Request, res: Response) => {
       );
       if (passwordIsCorrect) {
         const token = generateToken(userExists);
-        res.status(HTTPStatusCode.OK).json(
-          responseAPI({ token, userId: userExists?.id }, HTTPStatusCode.OK)
-        );
+        res
+          .status(HTTPStatusCode.OK)
+          .json(
+            responseAPI({ token, userId: userExists?.id }, HTTPStatusCode.OK)
+          );
+      } else {
+        res
+        .status(HTTPStatusCode.UNAUTHORIZED)
+        .json({ message: "Invalid credentials" });
       }
     } else {
       res
