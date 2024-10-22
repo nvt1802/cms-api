@@ -16,7 +16,7 @@ export const generateAPIKey = (
   secret_key: string,
   expiry_date?: string
 ) => {
-  return jwt.sign({ name, secret_key, expiry_date }, jwtSecret, {
+  return jwt.sign({ name }, secret_key, {
     expiresIn: expiry_date ?? "10y",
   });
 };
