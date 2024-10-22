@@ -142,20 +142,20 @@ router.delete(
           .eq("id", req.params?.categoryId);
         if (error) {
           res
-            .status(HTTPStatusCode.CREATED)
+            .status(HTTPStatusCode.CONFLICT)
             .json(
               responseAPI(
                 { message: "Cannot delete category" },
-                HTTPStatusCode.CREATED
+                HTTPStatusCode.CONFLICT
               )
             );
         } else {
           res
-            .status(HTTPStatusCode.CREATED)
+            .status(HTTPStatusCode.OK)
             .json(
               responseAPI(
                 { message: "Delete category success" },
-                HTTPStatusCode.CREATED
+                HTTPStatusCode.OK
               )
             );
         }

@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { supabase } from "../database/supabase";
 import { hashPassword, verifyPassword } from "../utils/password";
-import generateToken from "../utils/token";
+import { generateToken } from "../utils/token";
 import { HTTPStatusCode } from "../utils/enum";
 import { IUserAuth } from "../types/type";
 import { responseAPI } from "../utils/apiResponse";
@@ -52,8 +52,8 @@ router.post("/login", async (req: Request, res: Response) => {
           );
       } else {
         res
-        .status(HTTPStatusCode.UNAUTHORIZED)
-        .json({ message: "Invalid credentials" });
+          .status(HTTPStatusCode.UNAUTHORIZED)
+          .json({ message: "Invalid credentials" });
       }
     } else {
       res

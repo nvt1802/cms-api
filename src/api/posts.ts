@@ -285,20 +285,20 @@ router.delete(
         .eq("id", req.params?.postId);
       if (error) {
         res
-          .status(HTTPStatusCode.CREATED)
+          .status(HTTPStatusCode.CONFLICT)
           .json(
             responseAPI(
               { message: "Cannot delete post" },
-              HTTPStatusCode.CREATED
+              HTTPStatusCode.CONFLICT
             )
           );
       } else {
         res
-          .status(HTTPStatusCode.CREATED)
+          .status(HTTPStatusCode.OK)
           .json(
             responseAPI(
               { message: "Delete post success" },
-              HTTPStatusCode.CREATED
+              HTTPStatusCode.OK
             )
           );
       }

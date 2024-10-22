@@ -8,6 +8,7 @@ import accountRoutes from "./api/account";
 import categoriesRoutes from "./api/categories";
 import tagsRoutes from "./api/tags";
 import uploadRoutes from "./api/upload";
+import apiKeysRoutes from "./api/api-key";
 
 dotenv.config();
 const app: Express = express();
@@ -26,6 +27,7 @@ app.use("/api/", accountRoutes);
 app.use("/api/", categoriesRoutes);
 app.use("/api/", tagsRoutes);
 app.use("/api/", uploadRoutes);
+app.use("/api/", apiKeysRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at port: ${port}`);
