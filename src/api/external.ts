@@ -3,6 +3,7 @@ import { supabase } from "../database/supabase";
 import { responseAPI } from "../utils/apiResponse";
 import { authenticateAPIKeyToken } from "../utils/authenticateToken";
 import { HTTPStatusCode } from "../utils/enum";
+import { convertEditorDataToHTML } from "../utils/richText";
 
 const router = express.Router();
 
@@ -39,6 +40,41 @@ router.get(
             HTTPStatusCode.OK
           )
         );
+      } else {
+        res
+          .status(HTTPStatusCode.UNAUTHORIZED)
+          .json({ message: "Invalid credentials" });
+      }
+    } catch (error) {
+      res
+        .status(HTTPStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error" });
+    }
+  }
+);
+
+router.get(
+  "/external/posts/:slug",
+  authenticateAPIKeyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { data } = await supabase
+        .from("posts")
+        .select(
+          "*, categories(id, name,slug), users(id, username, profile_picture), tags(id, name,slug)"
+        )
+        .eq("slug", req.params?.slug)
+        .eq("status", "published")
+        .single();
+
+      if (data) {
+        const content = convertEditorDataToHTML(
+          data?.content ? JSON?.parse(data?.content)?.blocks : ""
+        );
+
+        res
+          .status(HTTPStatusCode.OK)
+          .json(responseAPI({ ...data, content }, HTTPStatusCode.OK));
       } else {
         res
           .status(HTTPStatusCode.UNAUTHORIZED)
