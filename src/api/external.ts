@@ -1,9 +1,7 @@
 import express, { Request, Response } from "express";
 import { supabase } from "../database/supabase";
 import { responseAPI } from "../utils/apiResponse";
-import {
-  authenticateAPIKeyToken
-} from "../utils/authenticateToken";
+import { authenticateAPIKeyToken } from "../utils/authenticateToken";
 import { HTTPStatusCode } from "../utils/enum";
 
 const router = express.Router();
@@ -24,6 +22,7 @@ router.get(
             count: "exact",
           }
         )
+        .eq("status", "published")
         .range(offset, offset + limit - 1);
 
       if (data && !!data?.length) {
