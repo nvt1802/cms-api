@@ -71,7 +71,6 @@ router.get(
         const content = convertEditorDataToHTML(
           data?.content ? JSON?.parse(data?.content)?.blocks : ""
         );
-
         res
           .status(HTTPStatusCode.OK)
           .json(responseAPI({ ...data, content }, HTTPStatusCode.OK));

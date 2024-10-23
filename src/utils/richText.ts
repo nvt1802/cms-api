@@ -14,7 +14,7 @@ export const convertEditorDataToHTML = (data: any[]) => {
             ? `<ol>${listItems}</ol>`
             : `<ul>${listItems}</ul>`;
         case "image":
-          return `<img src="${block.data.file.url}" alt="${block.data.caption}" />`;
+          return `<img src="${block.data.url}" alt="${block.data.caption}" />`;
         case "quote":
           return `<blockquote>${block.data.text}<footer>${block.data.caption}</footer></blockquote>`;
         case "code":
