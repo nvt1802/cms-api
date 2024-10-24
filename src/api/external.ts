@@ -24,6 +24,7 @@ router.get(
           }
         )
         .eq("status", "published")
+        .order("published_at", { ascending: false })
         .range(offset, offset + limit - 1);
 
       if (data && !!data?.length) {
