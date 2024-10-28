@@ -51,8 +51,8 @@ export const convertEditorDataToHTML = (data: any[]) => {
           return block.data.html;
         case "inlineCode":
           return `<code>${block.data.text}</code>`;
-        case "simpleImage":
-          return `<img src="${block.data.url}" alt="${block.data.caption}" />`;
+        case "imageSelection":
+          return `<img src="${block.data.url}" alt="${block.data?.caption}" />`;
         default:
           console.warn(`Unsupported block type: ${block.type}`);
           return "";
