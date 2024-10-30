@@ -43,8 +43,8 @@ router.get(
         );
       } else {
         res
-          .status(HTTPStatusCode.UNAUTHORIZED)
-          .json({ message: "Invalid credentials" });
+          .status(HTTPStatusCode.NOT_FOUND)
+          .json({ message: "Not found blogs" });
       }
     } catch (error) {
       res
@@ -77,8 +77,8 @@ router.get(
           .json(responseAPI({ ...data, content }, HTTPStatusCode.OK));
       } else {
         res
-          .status(HTTPStatusCode.UNAUTHORIZED)
-          .json({ message: "Invalid credentials" });
+          .status(HTTPStatusCode.NOT_FOUND)
+          .json({ message: "Not found blogs" });
       }
     } catch (error) {
       res
