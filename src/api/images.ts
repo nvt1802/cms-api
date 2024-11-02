@@ -18,6 +18,7 @@ router.get(
       const { data, count } = await supabase
         .from("images")
         .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
         .range(offset, offset + limit - 1);
       if (data && !!data?.length) {
         const totalPages = Math.ceil((count || 0) / limit);

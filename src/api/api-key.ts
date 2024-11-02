@@ -18,6 +18,7 @@ router.get(
       const { data, count } = await supabase
         .from("api_keys")
         .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
         .range(offset, offset + limit - 1);
 
       if (data && !!data?.length) {

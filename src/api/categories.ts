@@ -17,6 +17,7 @@ router.get(
       const { data, count } = await supabase
         .from("categories")
         .select("*", { count: "exact" })
+        .order("updated_at", { ascending: false })
         .range(offset, offset + limit - 1);
 
       if (data && !!data?.length) {

@@ -3,7 +3,6 @@ import { supabase } from "../database/supabase";
 import { responseAPI } from "../utils/apiResponse";
 import { authenticateAPIKeyToken } from "../utils/authenticateToken";
 import { HTTPStatusCode } from "../utils/enum";
-import { convertEditorDataToHTML } from "../utils/richText";
 
 const router = express.Router();
 
@@ -69,12 +68,9 @@ router.get(
         .single();
 
       if (data) {
-        const content = convertEditorDataToHTML(
-          data?.content ? JSON?.parse(data?.content)?.blocks : ""
-        );
         res
           .status(HTTPStatusCode.OK)
-          .json(responseAPI({ ...data, content }, HTTPStatusCode.OK));
+          .json(responseAPI({ ...data }, HTTPStatusCode.OK));
       } else {
         res
           .status(HTTPStatusCode.NOT_FOUND)

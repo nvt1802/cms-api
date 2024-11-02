@@ -14,6 +14,7 @@ router.get("/tags", authenticateToken, async (req: Request, res: Response) => {
     const { data, count } = await supabase
       .from("tags")
       .select("*", { count: "exact" })
+      .order("updated_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (data && !!data?.length) {
